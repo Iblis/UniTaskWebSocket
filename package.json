@@ -1,0 +1,18 @@
+{
+  "name": "com.pwalser.unitaskwebsocket",
+  "displayName": "UniTaskWebSocket",
+  "version": "0.1.0",
+  "unity": "2021.2",
+  "description": "Wraps a WebSocket (System.Net.WebSockets and jslib-bridged WebSocket) in an Interface that returns UniTask, allows async/await WebSocket operations in Unity",
+  "keywords": [
+    "webgl",
+	"websocket",
+	"unitask"
+  ],
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Philipp Walser"
+  },
+  "changelogUrl": "https://github.com/Iblis/UniTaskWebSocket/releases",
+  "category": "Scripting"
+}
