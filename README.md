@@ -6,6 +6,8 @@ This code is based on https://github.com/jirihybek/unity-websocket-webgl and htt
 The difference is that it uses an Interface that returns UniTask.
 Therefore this Interface allows you to use the async/await-Pattern, very similar to System.Net.WebSockets (replacing Task with UniTask).
 
+Example on how to use this Library: https://github.com/Iblis/UniTaskWebSocketExample
+
 This code was developed and tested with Unity 2021.2. It might work in previous versions, but there was an issue with jslib files beeing imported from packages in past Unity Versions. 
 If you get errors about the jslib not beeing available during Runtime, you need to copy the content of this repos Runtime/Plugins folder into your projects Assets/Plugins folder.
 
