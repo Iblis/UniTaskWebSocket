@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 
 namespace UniTaskWebSocket
@@ -30,7 +31,23 @@ namespace UniTaskWebSocket
                 return;
             }
             await Socket.CloseAsync(closeCode, reason, cancellationToken);
-        }        
+        }
+        
+        public async UniTask<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken)
+        {
+            return await Socket.ReceiveAsync(buffer, cancellationToken);
+        }
+
+        public async UniTask SendAsync(ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken token)
+        {
+            await Socket.SendAsync(buffer, messageType, endOfMessage, token);
+        }
+
+        public async UniTask SendText(string message, CancellationToken token)
+        {
+            var dataToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
+            await Socket.SendAsync(dataToSend, WebSocketMessageType.Text, true, token);
+        }
 
         public void Dispose()
         {

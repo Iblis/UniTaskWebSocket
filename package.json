@@ -1,7 +1,7 @@
 {
   "name": "com.pwalser.unitaskwebsocket",
   "displayName": "UniTaskWebSocket",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "unity": "2021.2",
   "description": "Wraps a WebSocket (System.Net.WebSockets and jslib-bridged WebSocket) in an Interface that returns UniTask, allows async/await WebSocket operations in Unity",
   "keywords": [

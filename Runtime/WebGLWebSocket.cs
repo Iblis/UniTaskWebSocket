@@ -69,7 +69,7 @@ namespace UniTaskWebSocket
         {
             if (messageType == WebSocketMessageType.Text)
             {
-                SendText(System.Text.Encoding.UTF8.GetString(buffer.Array));
+                SendText(System.Text.Encoding.UTF8.GetString(buffer.Array), token);
             }
             else
             {
@@ -80,7 +80,7 @@ namespace UniTaskWebSocket
             return UniTask.CompletedTask;
         }
 
-        public UniTask SendText(string message)
+        public UniTask SendText(string message, CancellationToken token)
         {
             int ret = WebSocketSendText(instanceId, message);
 
@@ -103,21 +103,10 @@ namespace UniTaskWebSocket
             }
         }
 
-        // TODO: allow using modern data types if runtime allows it
-        /*public async UniTask<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken token)
+        public async UniTask<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken)
         {
-            try
-            {
-                WebSocketMessage message = await receivedQueue.Reader.ReadAsync();
-                Debug.Log($"Message Received with bytes: {message.Result.Count}");
-                message.MoveDataTo(buffer.AsMemory());
-                return message.Result;
-            }
-            catch (ChannelClosedException)
-            {
-                throw new EndOfStreamException();
-            }
-        }*/
+            return await ReceiveAsync(buffer.AsMemory(), cancellationToken);
+        }
 
         readonly int instanceId;
         readonly Channel<WebSocketMessage> receivedQueue = Channel.CreateSingleConsumerUnbounded<WebSocketMessage>();
