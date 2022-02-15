@@ -29,6 +29,6 @@ namespace UniTaskWebSocket
 
         private byte[] _buffer;
 
-        private const string INVALID_OPERATION = "No Data to move. MoveTo(Span<byte> span) can only be called once";
+        private const String INVALID_OPERATION = "No Data to move. MoveTo(Span<byte> span) can only be called once";
     }
 }

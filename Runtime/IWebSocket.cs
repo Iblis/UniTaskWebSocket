@@ -7,16 +7,18 @@ namespace UniTaskWebSocket
 {
     public interface IWebSocket : IDisposable
     {
+        String SubProtocol { get; }
+
         UniTask ConnectAsync(Uri uri, CancellationToken cancellationToken);
 
-        UniTask ConnectAsync(string uri, CancellationToken cancellationToken);
+        UniTask ConnectAsync(String uri, CancellationToken cancellationToken);
 
-        UniTask CloseAsync(WebSocketCloseStatus closeCode, string reason, CancellationToken cancellationToken);
+        UniTask CloseAsync(WebSocketCloseStatus closeCode, String reason, CancellationToken cancellationToken);
 
         UniTask<WebSocketReceiveResult> ReceiveAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken);
 
         UniTask SendAsync(ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken token);
 
-        UniTask SendText(string message, CancellationToken token);
+        UniTask SendText(String message, CancellationToken token);
     }
 }

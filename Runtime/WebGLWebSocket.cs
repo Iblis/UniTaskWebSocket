@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Linq;
 using AOT;
 using Cysharp.Threading.Tasks;
 
@@ -11,9 +12,37 @@ namespace UniTaskWebSocket
     // this is the client implementation used by browsers
     public class WebGLWebSocket : IWebSocket
     {
-        public WebGLWebSocket()
+        public String SubProtocol { get; }
+
+        public WebGLWebSocket(String subProtocol = null)
         {
             instanceId = WebSocketAllocate();
+            if(!String.IsNullOrEmpty(subProtocol))
+            {
+                WebSocketAddSubProtocol(instanceId, subProtocol);
+                SubProtocol = subProtocol;
+            }
+            else
+            {
+                SubProtocol = String.Empty;
+            }
+        }
+
+        public WebGLWebSocket(IEnumerable<String> subProtocols)
+        {
+            instanceId = WebSocketAllocate();
+            if (subProtocols != null && subProtocols.Any())
+            {
+                foreach (var subProtocol in subProtocols)
+                {
+                    WebSocketAddSubProtocol(instanceId, subProtocol);
+                }
+                SubProtocol = String.Join(", ", subProtocols);
+            }
+            else
+            {
+                SubProtocol = String.Empty;
+            }
         }
 
         ~WebGLWebSocket()
@@ -35,7 +64,7 @@ namespace UniTaskWebSocket
             return ConnectAsync(uri.ToString(), token);
         }
 
-        public UniTask ConnectAsync(string uri, CancellationToken token)
+        public UniTask ConnectAsync(String uri, CancellationToken token)
         {
             clients[instanceId] = this;
             _connectCompletionSource = new UniTaskCompletionSource();
@@ -50,7 +79,7 @@ namespace UniTaskWebSocket
             return _connectCompletionSource.Task.AttachExternalCancellation(token);
         }
 
-        public UniTask CloseAsync(WebSocketCloseStatus closeCode, string reason, CancellationToken token)
+        public UniTask CloseAsync(WebSocketCloseStatus closeCode, String reason, CancellationToken token)
         {
             if(_closeCompletionSource != null)
             {
@@ -80,7 +109,7 @@ namespace UniTaskWebSocket
             return UniTask.CompletedTask;
         }
 
-        public UniTask SendText(string message, CancellationToken token)
+        public UniTask SendText(String message, CancellationToken token)
         {
             int ret = WebSocketSendText(instanceId, message);
 
@@ -117,7 +146,7 @@ namespace UniTaskWebSocket
 
         static readonly Dictionary<int, WebGLWebSocket> clients = new Dictionary<int, WebGLWebSocket>();
         
-        public static void HandleInstanceDestroy(int instanceId)
+        static void HandleInstanceDestroy(int instanceId)
         {
             clients.Remove(instanceId);
             WebSocketFree(instanceId);
@@ -128,13 +157,13 @@ namespace UniTaskWebSocket
         public static extern int WebSocketAllocate();
 
         [DllImport("__Internal")]
-        public static extern int WebSocketAddSubProtocol(int instanceId, string subprotocol);
+        public static extern int WebSocketAddSubProtocol(int instanceId, String subprotocol);
 
         [DllImport("__Internal")]
         public static extern void WebSocketFree(int instanceId);
 
         [DllImport("__Internal")]
-        public static extern int WebSocketConnect(string url,
+        public static extern int WebSocketConnect(String url,
             int id,
             Action<int> onopen,
             Action<int, IntPtr, int, bool> ondata,
@@ -142,7 +171,7 @@ namespace UniTaskWebSocket
             Action<int,int> onclose);
 
         [DllImport("__Internal")]
-        public static extern int WebSocketClose(int instanceId, int code, string reason);
+        public static extern int WebSocketClose(int instanceId, int code, String reason);
 
         [DllImport("__Internal")]
         public static extern int WebSocketSend(int instanceId, byte[] dataPtr, int dataLength);
@@ -151,7 +180,7 @@ namespace UniTaskWebSocket
         public static extern int WebSocketSendFragment(int instanceId, byte[] dataPtr, int dataLength, bool endOfMessage);
 
         [DllImport("__Internal")]
-        public static extern int WebSocketSendText(int instanceId, string message);
+        public static extern int WebSocketSendText(int instanceId, String message);
 
         [DllImport("__Internal")]
         public static extern int WebSocketGetState(int instanceId);
@@ -182,7 +211,7 @@ namespace UniTaskWebSocket
 
             if (clients.TryGetValue(instanceId, out instanceRef))
             {
-                string errorMsg = Marshal.PtrToStringAuto(errorPtr);
+                String errorMsg = Marshal.PtrToStringAuto(errorPtr);
                 // TODO: handle on error....
                 //instanceRef.DelegateOnErrorEvent(errorMsg);
             }
@@ -256,29 +285,29 @@ namespace UniTaskWebSocket
             public class WebSocketException : Exception
             {
                 public WebSocketException() { }
-                public WebSocketException(string message) : base(message) { }
-                public WebSocketException(string message, Exception inner) : base(message, inner) { }
+                public WebSocketException(String message) : base(message) { }
+                public WebSocketException(String message, Exception inner) : base(message, inner) { }
             }
 
             public class WebSocketUnexpectedException : WebSocketException
             {
                 public WebSocketUnexpectedException() { }
-                public WebSocketUnexpectedException(string message) : base(message) { }
-                public WebSocketUnexpectedException(string message, Exception inner) : base(message, inner) { }
+                public WebSocketUnexpectedException(String message) : base(message) { }
+                public WebSocketUnexpectedException(String message, Exception inner) : base(message, inner) { }
             }
 
             public class WebSocketInvalidArgumentException : WebSocketException
             {
                 public WebSocketInvalidArgumentException() { }
-                public WebSocketInvalidArgumentException(string message) : base(message) { }
-                public WebSocketInvalidArgumentException(string message, Exception inner) : base(message, inner) { }
+                public WebSocketInvalidArgumentException(String message) : base(message) { }
+                public WebSocketInvalidArgumentException(String message, Exception inner) : base(message, inner) { }
             }
 
             public class WebSocketInvalidStateException : WebSocketException
             {
                 public WebSocketInvalidStateException() { }
-                public WebSocketInvalidStateException(string message) : base(message) { }
-                public WebSocketInvalidStateException(string message, Exception inner) : base(message, inner) { }
+                public WebSocketInvalidStateException(String message) : base(message) { }
+                public WebSocketInvalidStateException(String message, Exception inner) : base(message, inner) { }
             }
 
         }

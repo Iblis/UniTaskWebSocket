@@ -10,6 +10,8 @@ namespace UniTaskWebSocket
     {
         public ClientWebSocket Socket { get; }
 
+        public String SubProtocol => Socket != null ? Socket.SubProtocol : String.Empty;
+
         public WebSocketWrapper(ClientWebSocket socket)
         {
             Socket = socket;
@@ -19,12 +21,12 @@ namespace UniTaskWebSocket
             await Socket.ConnectAsync(uri, cancellationToken);
         }
 
-        public UniTask ConnectAsync(string uri, CancellationToken cancellationToken)
+        public UniTask ConnectAsync(String uri, CancellationToken cancellationToken)
         {
             return ConnectAsync(new Uri(uri), cancellationToken);
         }
 
-        public async UniTask CloseAsync(WebSocketCloseStatus closeCode, string reason, CancellationToken cancellationToken)
+        public async UniTask CloseAsync(WebSocketCloseStatus closeCode, String reason, CancellationToken cancellationToken)
         {
             if(Socket.CloseStatus.HasValue)
             {
@@ -43,7 +45,7 @@ namespace UniTaskWebSocket
             await Socket.SendAsync(buffer, messageType, endOfMessage, token);
         }
 
-        public async UniTask SendText(string message, CancellationToken token)
+        public async UniTask SendText(String message, CancellationToken token)
         {
             var dataToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             await Socket.SendAsync(dataToSend, WebSocketMessageType.Text, true, token);
