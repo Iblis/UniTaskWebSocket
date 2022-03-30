@@ -1,3 +1,5 @@
+#if UNITY_WEBGL && !UNITY_EDITOR
+
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
@@ -152,7 +154,7 @@ namespace UniTaskWebSocket
             WebSocketFree(instanceId);
         }
 
-        #region Javascript native functions
+#region Javascript native functions
         [DllImport("__Internal")]
         public static extern int WebSocketAllocate();
 
@@ -186,9 +188,9 @@ namespace UniTaskWebSocket
         public static extern int WebSocketGetState(int instanceId);
                
 
-        #endregion
+#endregion
 
-        #region Javascript callbacks
+#region Javascript callbacks
 
         [MonoPInvokeCallback(typeof(Action))]
         public static void OnOpen(int id)
@@ -223,7 +225,7 @@ namespace UniTaskWebSocket
             clients[instanceId].receivedQueue.Writer.TryWrite(new WebSocketMessage(ptr, length, isTextMessage));
         }
 
-        #endregion
+#endregion
         
         public enum WebSocketCloseCode
         {
@@ -313,3 +315,4 @@ namespace UniTaskWebSocket
         }
     }
 }
+#endif
